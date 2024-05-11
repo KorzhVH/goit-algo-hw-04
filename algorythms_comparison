@@ -1,0 +1,66 @@
+import random
+from timeit import timeit
+
+
+def insertion_sort(lst):
+    for i in range(1, len(lst)):
+        key = lst[i]
+        j = i - 1
+        while j >= 0 and key < lst[j]:
+            lst[j + 1] = lst[j]
+            j -= 1
+        lst[j + 1] = key
+    return lst
+
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left_half = arr[:mid]
+    right_half = arr[mid:]
+
+    return merge(merge_sort(left_half), merge_sort(right_half))
+
+
+def merge(left, right):
+    merged = []
+    left_index = 0
+    right_index = 0
+
+    while left_index < len(left) and right_index < len(right):
+        if left[left_index] <= right[right_index]:
+            merged.append(left[left_index])
+            left_index += 1
+        else:
+            merged.append(right[right_index])
+            right_index += 1
+
+    while left_index < len(left):
+        merged.append(left[left_index])
+        left_index += 1
+
+    while right_index < len(right):
+        merged.append(right[right_index])
+        right_index += 1
+
+    return merged
+
+
+def arr_creator(length):
+    return [random.randint(-100, 100) for _ in range(length)]
+
+def comparison():
+    sizes = [5000, 10000, 20000]
+    array = [arr_creator(size) for size in sizes]
+    for arr in array:
+        insert_time = timeit(stmt=f"insertion_sort({arr})", setup=f"from __main__ import insertion_sort", number=1)
+        print(f"array with length of {len(arr)} takes {insert_time} to be sorted with insertion")
+        merge_time = timeit(stmt=f"merge_sort({arr})", setup=f"from __main__ import merge_sort", number=1)
+        print(f"array with length of {len(arr)} takes {merge_time} to be sorted with merge sorting")
+        timsort_time = timeit(stmt=f"sorted({arr})", number=1)
+        print(f"array with length of {len(arr)} takes {timsort_time} to be sorted using timsort")
+
+if __name__ == "__main__":
+    comparison()
